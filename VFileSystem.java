@@ -2,6 +2,7 @@ import java.util.List;
 
 public class VFileSystem {
     private VDirectory _root;
+    private List<Boolean> _storageBlocks;
 
     // TODO loadSystemFromStorage()
 
@@ -9,7 +10,7 @@ public class VFileSystem {
         _root = new VDirectory("root");
     }
 
-    private void CreateFile(String fileName, int currentDirectoryIndex, List<String> directories, VDirectory currentDirectory) throws Exception {
+    public void CreateFile(String fileName, int currentDirectoryIndex, List<String> directories, VDirectory currentDirectory) throws Exception {
         if(currentDirectoryIndex == directories.size() - 1){ // the traversal has reached the directory in which a file should be created
             List<VFile> files = currentDirectory.getFiles();
             Boolean matchingFileNameFound = false;

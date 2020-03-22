@@ -1,3 +1,5 @@
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 public class VFile {
@@ -7,6 +9,7 @@ public class VFile {
 
     VFile(String name){
         _name = name;
+        _allocatedBlocks = new ArrayList<>();
     }
 
     public String getName(){
