@@ -27,11 +27,24 @@ public class Main {
                     String fileName = directories.get(directories.size() - 1);
                     directories.remove(directories.size() - 1);
                     try{
-                        vfs.CreateFile(fileName, 0, directories, vfs.getRoot());
+                        vfs.CreateFile(fileName, 1, directories, vfs.getRoot());
                     }catch (Exception e){e.printStackTrace();}
                     break;
                 }
-
+                case "CreateDirectory":
+                {
+                    List<String> directories = new LinkedList<String>(Arrays.asList(parsed[1].split("/")));
+                    if(!directories.get(0).equals("root")){
+                        System.out.println("The given path must start with 'root'");
+                        break;
+                    }
+                    String directoryName = directories.get(directories.size() - 1);
+                    directories.remove(directories.size() - 1);
+                    try{
+                        vfs.CreateDirectory(directoryName, 1, directories, vfs.getRoot());
+                    }catch (Exception e){e.printStackTrace();}
+                    break;
+                }
                 case "quit":
                 {
                     quit = true;
