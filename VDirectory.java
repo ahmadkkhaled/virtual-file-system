@@ -28,4 +28,8 @@ public class VDirectory {
     public String toString(){
         return "<" + _name + ">";
     }
+
+    void addFile(VFile file){
+        _files.add(file);
+    }
 }

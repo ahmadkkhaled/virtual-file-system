@@ -1,18 +1,74 @@
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class VFileSystem {
     private VDirectory _root;
     private boolean[] _storageBlocks;
 
-    // TODO loadSystemFromStorage()
+    private void DFS_Load(VDirectory currentDirectory, Scanner reader){
+        String line = reader.nextLine();
+
+        while(!line.equals("#")){
+            if(line.charAt(0) == '<'){ // the line is a directory name
+                StringBuilder directoryName = new StringBuilder();
+
+                for(int i = 0; i<line.length(); i++){
+                    if(line.charAt(i) != '<' && line.charAt(i) != '>')
+                        directoryName.append(line.charAt(i));
+                }
+
+                VDirectory subDirectory = new VDirectory(directoryName.toString());
+                currentDirectory.getSubDirectories().add(subDirectory);
+                DFS_Load(subDirectory, reader);
+            }
+            else{ // the line is a file name
+                VFile file = new VFile(line);
+
+                int fileSize = Integer.parseInt(reader.nextLine()); // the line following the file name is the size of the file
+                for(int i = 0; i < fileSize; i++){ // 'fileSize' lines follow, each contains the index of the block allocated to that file
+                    int allocatedBlock = Integer.parseInt(reader.nextLine());
+                    file.getAllocatedBlocks().add(allocatedBlock);
+                }
+
+                currentDirectory.addFile(file);
+            }
+            line = reader.nextLine();
+        }
+    }
+
+    private void LoadState() throws Exception {
+        Scanner reader = new Scanner(new File("state_file.txt"));
+
+        Integer storageSize = Integer.parseInt(reader.nextLine());
+        if(storageSize != _storageBlocks.length){
+            throw new Exception("Saved storage size is different from storage size passed to VFileSystem constructor");
+        }
+
+        String blocks = reader.nextLine();
+        for(int i = 0; i<_storageBlocks.length; i++){
+            if(blocks.charAt(i) == '1'){
+                _storageBlocks[i] = true;
+            }else{
+                _storageBlocks[i] = false;
+            }
+        }
+
+        DFS_Load(_root, reader);
+
+        reader.close();
+    }
 
     public VFileSystem(int storageSize){
         _root = new VDirectory("root");
         _storageBlocks = new boolean[storageSize];
+
+        try{ LoadState(); }
+        catch (Exception e){e.printStackTrace();}
     }
 
 
@@ -52,6 +108,7 @@ public class VFileSystem {
             }
         }
     }
+
     /**
      *
      * @param fileName Name of the file to be created
@@ -113,6 +170,7 @@ public class VFileSystem {
         }
         return null;
     }
+
     public void CreateDirectory(String directoryName, int nextDirectoryIndex, List<String> directories, VDirectory currentDirectory) throws Exception{
         List<VDirectory> subDirectories = currentDirectory.getSubDirectories(); // directories under currentDirectory
 
@@ -142,6 +200,7 @@ public class VFileSystem {
             }
         }
     }
+
     public VDirectory getRoot(){
         return _root;
     }
@@ -173,12 +232,13 @@ public class VFileSystem {
             if(i == _storageBlocks.length - 1)
                 writer.write("\n");
         }
+
         DFS_Save(_root, stateFile, writer);
 
         writer.close();
     }
 
-    public void DFS_Save(VDirectory currentDirectory, File stateFile, FileWriter writer) throws IOException {
+    private void DFS_Save(VDirectory currentDirectory, File stateFile, FileWriter writer) throws IOException {
         List<VFile> subFiles = currentDirectory.getFiles();
         for(VFile file : subFiles){
             writer.write(file + "\n");

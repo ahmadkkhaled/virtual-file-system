@@ -11,7 +11,7 @@ public class Main {
         while(!quit){
             System.out.print("Enter a command <enter 'quit' to SAVE and exit>: ");
             userInput = reader.nextLine();
-            String parsed[] = userInput.split(" ");
+            String[] parsed = userInput.split(" ");
             if(parsed.length > 3){
                 System.out.println("Error: A command can have a maximum of 2 parameters");
                 continue;
