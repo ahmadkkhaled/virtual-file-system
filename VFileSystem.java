@@ -1,3 +1,6 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,14 +13,10 @@ public class VFileSystem {
     public VFileSystem(int storageSize){
         _root = new VDirectory("root");
         _storageBlocks = new boolean[storageSize];
-        _storageBlocks[0] = _storageBlocks[1] = true;
-        _storageBlocks[2] = _storageBlocks[3] = _storageBlocks[4] = _storageBlocks[5] = false;
-        _storageBlocks[6] = true;
-        _storageBlocks[7] = _storageBlocks[8] = _storageBlocks[9] = false;
     }
 
 
-    private void CAllocate(VFile file, int fileSize) throws Exception{ // contiguous allocation.
+    private void C_Allocate(VFile file, int fileSize) throws Exception{ // contiguous allocation.
         int fileLeft, fileRight, windowLeft, windowRight;
         fileLeft = fileRight = windowLeft = windowRight = -1;
 
@@ -80,7 +79,7 @@ public class VFileSystem {
             }
             else{
                 VFile file = new VFile(fileName);
-                CAllocate(file, fileSize);
+                C_Allocate(file, fileSize);
                 files.add(file);
             }
         }
@@ -161,5 +160,41 @@ public class VFileSystem {
         for(VDirectory subDirectory : currentDirectory.getSubDirectories()){
             print(subDirectory, indentation);
         }
+    }
+
+    public void SaveState() throws IOException {
+        File stateFile = new File("state_file.txt");
+        FileWriter writer = new FileWriter("state_file.txt");
+
+        writer.write(_storageBlocks.length + "\n");
+        for(int i = 0; i<_storageBlocks.length; i++){
+            writer.write( Integer.toString(_storageBlocks[i] ? 1 : 0) );
+
+            if(i == _storageBlocks.length - 1)
+                writer.write("\n");
+        }
+        DFS_Save(_root, stateFile, writer);
+
+        writer.close();
+    }
+
+    public void DFS_Save(VDirectory currentDirectory, File stateFile, FileWriter writer) throws IOException {
+        List<VFile> subFiles = currentDirectory.getFiles();
+        for(VFile file : subFiles){
+            writer.write(file + "\n");
+
+            writer.write(file.getAllocatedBlocks().size() + "\n");
+            for(int i = 0; i<file.getAllocatedBlocks().size(); i++){
+                writer.write(file.getAllocatedBlocks().get(i) + "\n");
+            }
+        }
+
+        List<VDirectory> subDirectories = currentDirectory.getSubDirectories();
+        for(VDirectory subDirectory : subDirectories){
+            writer.write(subDirectory + "\n");
+            DFS_Save(subDirectory, stateFile, writer);
+        }
+
+        writer.write("#\n");
     }
 }

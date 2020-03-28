@@ -23,4 +23,8 @@ public class VFile {
     public List<Integer> getAllocatedBlocks(){
         return _allocatedBlocks;
     }
+
+    public int getSize(){
+        return _allocatedBlocks.size();
+    }
 }

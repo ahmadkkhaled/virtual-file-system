@@ -9,7 +9,7 @@ public class Main {
         String userInput = "";
         boolean quit = false;
         while(!quit){
-            System.out.print("Enter a command <enter 'quit' to exit>: ");
+            System.out.print("Enter a command <enter 'quit' to SAVE and exit>: ");
             userInput = reader.nextLine();
             String parsed[] = userInput.split(" ");
             if(parsed.length > 3){
@@ -61,6 +61,9 @@ public class Main {
                 case "quit":
                 {
                     quit = true;
+                    try{
+                        vfs.SaveState();
+                    }catch (Exception e){e.printStackTrace();}
                     break;
                 }
 
