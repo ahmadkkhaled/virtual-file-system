@@ -4,7 +4,6 @@ import java.util.List;
 
 public class VFile {
     private String _name;
-
     private List<Integer> _allocatedBlocks; // the indices of the blocks allocated to this file in the secondary storage.
 
     VFile(String name){
@@ -16,7 +15,12 @@ public class VFile {
         return _name;
     }
 
-    public void print() {
-        throw new UnsupportedOperationException(); // not yet implemented
+    @Override
+    public String toString(){
+        return _name;
+    }
+
+    public List<Integer> getAllocatedBlocks(){
+        return _allocatedBlocks;
     }
 }

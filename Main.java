@@ -2,7 +2,8 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        VFileSystem vfs = new VFileSystem();
+
+        VFileSystem vfs = new VFileSystem(10);
 
         Scanner reader = new Scanner(System.in);
         String userInput = "";
@@ -11,14 +12,19 @@ public class Main {
             System.out.print("Enter a command <enter 'quit' to exit>: ");
             userInput = reader.nextLine();
             String parsed[] = userInput.split(" ");
-            if(parsed.length > 2){
-                System.out.println("Please omit whitespaces from the given command string");
+            if(parsed.length > 3){
+                System.out.println("Error: A command can have a maximum of 2 parameters");
                 continue;
             }
             switch(parsed[0])
             {
-                case "CreateFile":
+                case "CreateFile": /// CreateFile root/dir1/dir2/filename int_size
                 {
+                    if(parsed.length < 3){
+                        System.out.println("Please provide 2 parameters for 'CreateFile'");
+                        break;
+                    }
+                    int fileSize = Integer.parseInt(parsed[2]);
                     List<String> directories = new LinkedList<String>(Arrays.asList(parsed[1].split("/")));
                     if(!directories.get(0).equals("root")){
                         System.out.println("The given path must start with 'root'");
@@ -27,7 +33,7 @@ public class Main {
                     String fileName = directories.get(directories.size() - 1);
                     directories.remove(directories.size() - 1);
                     try{
-                        vfs.CreateFile(fileName, 1, directories, vfs.getRoot());
+                        vfs.CreateFile(fileName, fileSize,1, directories, vfs.getRoot());
                     }catch (Exception e){e.printStackTrace();}
                     break;
                 }
@@ -45,6 +51,13 @@ public class Main {
                     }catch (Exception e){e.printStackTrace();}
                     break;
                 }
+
+                case "DisplayDiskStructure":
+                {
+                    System.out.println("======================== DISK STRUCTURE ========================");
+                    vfs.DisplayDiskStructure();
+                    break;
+                }
                 case "quit":
                 {
                     quit = true;
@@ -53,7 +66,7 @@ public class Main {
 
                 default:
                 {
-                    System.out.println("No valid command was given");
+                    System.out.println("Command not supported");
                 }
             }
         }

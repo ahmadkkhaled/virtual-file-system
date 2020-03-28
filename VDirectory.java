@@ -24,7 +24,8 @@ public class VDirectory {
         return _name;
     }
 
-    public void print() {
-        throw new UnsupportedOperationException(); // not yet implemented
+    @Override
+    public String toString(){
+        return "<" + _name + ">";
     }
 }
