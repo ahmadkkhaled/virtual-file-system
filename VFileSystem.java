@@ -190,6 +190,14 @@ public class VFileSystem {
         }
         return null;
     }
+    private int getFileindex(String fName, List<VFile>files){
+        for(int i = 0 ; i < files.size() ; ++i){
+            VFile vd = files.get(i);
+            if(vd.getName().equals(fName))
+                return i;
+        }
+        return -1;
+    }
 
     public void CreateDirectory(String directoryName, int nextDirectoryIndex, List<String> directories, VDirectory currentDirectory) throws Exception{
         List<VDirectory> subDirectories = currentDirectory.getSubDirectories(); // directories under currentDirectory
@@ -220,7 +228,65 @@ public class VFileSystem {
             }
         }
     }
+    void deleteDirectory(VDirectory currentDirectory ){
+        ///base case this is file or directory with no directories
+        List<VDirectory> subDirectories = currentDirectory.getSubDirectories(); // directories under currentDirectory
+        List<VFile> subfiles = currentDirectory.getFiles();
+        subfiles.clear(); /// delete all files
+        if(subDirectories.size() == 0){
+            /// if there's no subfiles then remove
+            return;
+        }
+        for(int i = 0 ; i < subDirectories.size() ; ++i){
+            deleteDirectory(subDirectories.get(i) );
+        }
+        subDirectories.clear();
+        return  ;
 
+
+
+    }
+    public  void getFileOrDirectorytoBeDeleted(String dfname , int nextDirectoryIndex ,List<String> directories
+            , VDirectory currentDirectory, boolean isDirectory ) throws Exception {
+        List<VDirectory> subDirectories = currentDirectory.getSubDirectories(); // directories under currentDirectory
+
+        if (nextDirectoryIndex == directories.size()) {
+            if(isDirectory){
+                VDirectory directory = getDirectory(dfname , subDirectories);
+                if(directory!=null) {
+                    deleteDirectory(directory);
+                    subDirectories.remove(directory);
+                }
+                else {
+                    throw new Exception("directory not found");
+                }
+            }
+            else {
+                List<VFile> subfiles = currentDirectory.getFiles();
+                int indx=  getFileindex(dfname , subfiles);
+                if(indx != -1){
+                    subfiles.remove(indx);
+                }
+                else {
+                    throw new Exception("The file doesn't exist");
+                }
+                return;
+
+            }
+        }
+        else {
+            /// we need to check directories only because the file is the last in the path and checked above
+            VDirectory directory = getDirectory(directories.get(nextDirectoryIndex), subDirectories);
+            if(directory == null){
+                throw new Exception("Couldn't find [" +
+                        directories.get(nextDirectoryIndex) +
+                        "] under [" +
+                        currentDirectory.getName() + "]");
+            }else{
+                CreateDirectory(dfname, nextDirectoryIndex + 1, directories, directory);
+            }
+        }
+    }
     public VDirectory getRoot(){
         return _root;
     }

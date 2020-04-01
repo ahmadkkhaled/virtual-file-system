@@ -32,7 +32,7 @@ public class Main {
                     }
                     String fileName = directories.get(directories.size() - 1);
                     directories.remove(directories.size() - 1);
-                    try{
+                    try{    /// i made it use indexed allocation for now only
                         vfs.CreateFile(fileName, fileSize,1, directories, vfs.getRoot());
                     }catch (Exception e){e.printStackTrace();}
                     break;
@@ -57,6 +57,37 @@ public class Main {
                     System.out.println("======================== DISK STRUCTURE ========================");
                     vfs.DisplayDiskStructure();
                     break;
+                }
+                case "deleteFile":{ ///done
+                    List<String> directories = new LinkedList<String>(Arrays.asList(parsed[1].split("/")));
+                    if(!directories.get(0).equals("root")){
+                        System.out.println("The given path must start with 'root'");
+                        break;
+                    }
+                    String dfname = directories.get(directories.size() - 1);
+                    directories.remove(directories.size() - 1);
+                    try{
+
+                        vfs.getFileOrDirectorytoBeDeleted(dfname, 1, directories, vfs.getRoot() ,false );
+                    }catch (Exception e){e.printStackTrace();}
+                    break;
+                }
+                case  "deleteDirectory":{
+                    List<String> directories = new LinkedList<String>(Arrays.asList(parsed[1].split("/")));
+                    if(!directories.get(0).equals("root")){
+                        System.out.println("The given path must start with 'root'");
+                        break;
+                    }
+                    String dfname = directories.get(directories.size() - 1);
+                    directories.remove(directories.size() - 1);
+                    try {
+                        vfs.getFileOrDirectorytoBeDeleted(dfname,1,directories,vfs.getRoot(),true);
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    break;
+
                 }
                 case "quit":
                 {
