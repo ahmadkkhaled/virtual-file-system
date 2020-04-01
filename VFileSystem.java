@@ -108,6 +108,25 @@ public class VFileSystem {
             }
         }
     }
+    private void indexedAllocation(VFile file , int fileSize) throws Exception {
+        List <Integer> tobeallocated  = new ArrayList<>();
+        for (int i = 0 ; i < _storageBlocks.length ; ++i){
+            if(!_storageBlocks[i]){ /// not allocated
+                tobeallocated.add(i);
+            }
+        }
+        if(tobeallocated.size() >= fileSize){
+            List<Integer> allocatedBlocks = file.getAllocatedBlocks();
+            for (int i = 0 ; i < fileSize ; ++i){
+                allocatedBlocks.add(tobeallocated.get(i));
+                _storageBlocks[tobeallocated.get(i)] = true;
+            }
+        }
+        else {
+            throw new Exception("Couldn't allocate an indexed set of blocks of size " + fileSize);
+        }
+
+    }
 
     /**
      *
@@ -136,7 +155,8 @@ public class VFileSystem {
             }
             else{
                 VFile file = new VFile(fileName);
-                C_Allocate(file, fileSize);
+//                C_Allocate(file, fileSize);/// i commented this to make it create with indexed allocation
+                indexedAllocation(file, fileSize);
                 files.add(file);
             }
         }
