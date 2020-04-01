@@ -232,6 +232,9 @@ public class VFileSystem {
         ///base case this is file or directory with no directories
         List<VDirectory> subDirectories = currentDirectory.getSubDirectories(); // directories under currentDirectory
         List<VFile> subfiles = currentDirectory.getFiles();
+        for(VFile f : subfiles){
+            deallocateFile(f);
+        }
         subfiles.clear(); /// delete all files
         if(subDirectories.size() == 0){
             /// if there's no subfiles then remove
@@ -245,6 +248,12 @@ public class VFileSystem {
 
 
 
+    }
+    void deallocateFile(VFile file){
+        List<Integer> ls =    file.getAllocatedBlocks();
+        for(Integer i : ls){
+            this._storageBlocks[i] = false;
+        }
     }
     public  void getFileOrDirectorytoBeDeleted(String dfname , int nextDirectoryIndex ,List<String> directories
             , VDirectory currentDirectory, boolean isDirectory ) throws Exception {
@@ -265,6 +274,8 @@ public class VFileSystem {
                 List<VFile> subfiles = currentDirectory.getFiles();
                 int indx=  getFileindex(dfname , subfiles);
                 if(indx != -1){
+                    VFile file = subfiles.get(indx);
+                    deallocateFile(file);
                     subfiles.remove(indx);
                 }
                 else {
