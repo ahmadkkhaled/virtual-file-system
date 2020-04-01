@@ -110,7 +110,7 @@ public class VFileSystem {
     }
     private void indexedAllocation(VFile file , int fileSize) throws Exception {
         List <Integer> tobeallocated  = new ArrayList<>();
-        for (int i = 0 ; i < _storageBlocks.length ; ++i){
+        for (int i = 0 ; i < _storageBlocks.length && tobeallocated.size()<fileSize ; ++i){ /// to break when the filesize is satisfied
             if(!_storageBlocks[i]){ /// not allocated
                 tobeallocated.add(i);
             }
