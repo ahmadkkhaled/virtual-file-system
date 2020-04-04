@@ -306,6 +306,28 @@ public class VFileSystem {
         print(_root, "");
     }
 
+    public void DisplayDiskStatus(){
+        int allocated_blocks = 0;
+        for(int i = 0; i < this._storageBlocks.length; ++i){
+            if(this._storageBlocks[i])
+                allocated_blocks++;
+        }
+        System.out.println("Disk space: " + (this._storageBlocks.length) + "kB");
+        System.out.println("Allocated space: " + (allocated_blocks) + "kB");
+        System.out.println("Free space: " + (this._storageBlocks.length - allocated_blocks) + "kB");
+        System.out.println("Allocated blocks in system: ");
+        for(int i = 0; i < this._storageBlocks.length; ++i){
+            if(this._storageBlocks[i])
+                System.out.print(i + " ");
+        }
+        System.out.println("\nEmpty blocks in system: ");
+        for(int i = 0; i < this._storageBlocks.length; ++i){
+            if(!this._storageBlocks[i])
+                System.out.print(i + " ");
+        }
+        System.out.println();
+    }
+
     private void print(VDirectory currentDirectory, String indentation){
         System.out.println(indentation + currentDirectory);
 

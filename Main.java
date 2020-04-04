@@ -58,6 +58,11 @@ public class Main {
                     vfs.DisplayDiskStructure();
                     break;
                 }
+                case "DisplayDiskStatus":
+                {
+                    vfs.DisplayDiskStatus();
+                    break;
+                }
                 case "deleteFile":{ ///done
                     List<String> directories = new LinkedList<String>(Arrays.asList(parsed[1].split("/")));
                     if(!directories.get(0).equals("root")){
