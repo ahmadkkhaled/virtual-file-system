@@ -3,7 +3,12 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
 
-        VFileSystem vfs = new VFileSystem(10);
+        int system_size = 10; // Default system size
+        if(args.length > 0){
+            system_size = Integer.parseInt(args[0]);
+        }
+
+        VFileSystem vfs = new VFileSystem(system_size);
 
         Scanner reader = new Scanner(System.in);
         String userInput = "";
@@ -58,6 +63,11 @@ public class Main {
                     vfs.DisplayDiskStructure();
                     break;
                 }
+                case "DisplayDiskStatus":
+                {
+                    vfs.DisplayDiskStatus();
+                    break;
+                }
                 case "deleteFile":{ ///done
                     List<String> directories = new LinkedList<String>(Arrays.asList(parsed[1].split("/")));
                     if(!directories.get(0).equals("root")){
@@ -104,5 +114,6 @@ public class Main {
                 }
             }
         }
+        reader.close();
     }
 }
