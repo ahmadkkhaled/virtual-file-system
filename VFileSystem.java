@@ -294,7 +294,7 @@ public class VFileSystem {
                         "] under [" +
                         currentDirectory.getName() + "]");
             }else{
-                CreateDirectory(dfname, nextDirectoryIndex + 1, directories, directory);
+                getFileOrDirectorytoBeDeleted(dfname, nextDirectoryIndex + 1, directories, directory,isDirectory);
             }
         }
     }
