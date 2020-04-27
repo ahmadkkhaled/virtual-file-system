@@ -9,6 +9,7 @@ public class Main {
         }
 
         VFileSystem vfs = new VFileSystem(system_size);
+        UserManager userManager = new UserManager(vfs);
 
         Scanner reader = new Scanner(System.in);
         String userInput = "";
@@ -17,12 +18,29 @@ public class Main {
             System.out.print("Enter a command <enter 'quit' to SAVE and exit>: ");
             userInput = reader.nextLine();
             String[] parsed = userInput.split(" ");
-            if(parsed.length > 3){
-                System.out.println("Error: A command can have a maximum of 2 parameters");
-                continue;
-            }
             switch(parsed[0])
             {
+                case "TellUser":
+                {
+                    System.out.println(userManager.getActiveUser());
+                    break;
+                }
+                case "CreateUser":
+                {
+                    System.out.println(userManager.CreateUser(parsed[1], parsed[2]));
+                    break;
+                }
+                case "Login":
+                {
+                    System.out.println(userManager.login(parsed[1], parsed[2]));
+                    break;
+                }
+                case "Grant":
+                {
+                    List<String> path = new LinkedList<String>(Arrays.asList(parsed[2].split("/")));
+                    System.out.println(userManager.grant(parsed[1], path, parsed[3]));
+                    break;
+                }
                 case "CreateFile": /// CreateFile root/dir1/dir2/filename int_size
                 {
                     if(parsed.length < 3){

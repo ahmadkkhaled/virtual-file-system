@@ -376,4 +376,22 @@ public class VFileSystem {
 
         writer.write("#\n");
     }
+
+    public boolean pathExists(List<String> directories){
+        return pathExists(1, directories, _root);
+    }
+
+    private boolean pathExists(int nextDirectoryIndex, List<String> directories, VDirectory currentDirectory){
+        if(nextDirectoryIndex == directories.size()){
+            return true;
+        }
+        List<VDirectory> subDirectories = currentDirectory.getSubDirectories();
+        VDirectory subDirectory = getDirectory(directories.get(nextDirectoryIndex), subDirectories);
+
+        if(subDirectory == null){
+            return false;
+        }
+
+        return pathExists(nextDirectoryIndex + 1, directories, subDirectory);
+    }
 }
