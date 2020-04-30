@@ -8,10 +8,20 @@ public class Main {
             system_size = Integer.parseInt(args[0]);
         }
 
-        VFileSystem vfs = new VFileSystem(system_size);
-        UserManager userManager = new UserManager(vfs);
+        final String permissionsFile = "permissions.dat";
 
         Scanner reader = new Scanner(System.in);
+
+        VFileSystem vfs = new VFileSystem(system_size);
+        UserManager userManager = UserManagerBooter.readManager(vfs, permissionsFile);
+        while(userManager.getUser().equals("")){
+            System.out.print("Enter username: ");
+            String username = reader.nextLine().trim();
+            System.out.print("Enter password: ");
+            String password = reader.nextLine().trim();
+            System.out.println(userManager.login(username, password));
+        }
+
         String userInput = "";
         boolean quit = false;
         while(!quit){
@@ -121,6 +131,7 @@ public class Main {
                 {
                     quit = true;
                     try{
+                        UserManagerBooter.saveManager(userManager, permissionsFile);
                         vfs.SaveState();
                     }catch (Exception e){e.printStackTrace();}
                     break;
