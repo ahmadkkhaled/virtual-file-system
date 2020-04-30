@@ -61,4 +61,10 @@ public class UserManager {
     public String getActiveUser() {
         return "Current active user: " + activeUser;
     }
+    public HashMap<List<String>, ArrayList<HashMap<String, String>>> getPermissions(){
+        return this.permission;
+    }
+    public HashMap<String, String> getUsers(){
+        return this.users;
+    }
 }
