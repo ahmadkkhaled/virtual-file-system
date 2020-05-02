@@ -43,20 +43,27 @@ public class Main {
                 }
                 case "CreateFile": /// CreateFile root/dir1/dir2/filename int_size
                 {
+
                     if(parsed.length < 3){
                         System.out.println("Please provide 2 parameters for 'CreateFile'");
                         break;
                     }
                     int fileSize = Integer.parseInt(parsed[2]);
-                    List<String> directories = new LinkedList<String>(Arrays.asList(parsed[1].split("/")));
-                    if(!directories.get(0).equals("root")){
+                    List<String> path = new LinkedList<String>(Arrays.asList(parsed[1].split("/")));
+                    if(!path.get(0).equals("root")){
                         System.out.println("The given path must start with 'root'");
                         break;
                     }
-                    String fileName = directories.get(directories.size() - 1);
-                    directories.remove(directories.size() - 1);
+                    String fileName = path.get(path.size() - 1);
+                    path.remove(path.size() - 1);
                     try{    /// i made it use indexed allocation for now only
-                        vfs.CreateFile(fileName, fileSize,1, directories, vfs.getRoot());
+                        if(userManager.hasPermission("10",path)) {
+                            vfs.CreateFile(fileName, fileSize, 1, path, vfs.getRoot());
+                        }
+                        else {
+                            ///todo
+                            System.out.println("you don't have permission");
+                        }
                     }catch (Exception e){e.printStackTrace();}
                     break;
                 }
@@ -70,7 +77,12 @@ public class Main {
                     String directoryName = directories.get(directories.size() - 1);
                     directories.remove(directories.size() - 1);
                     try{
-                        vfs.CreateDirectory(directoryName, 1, directories, vfs.getRoot());
+                        if(userManager.hasPermission("10",directories)) {
+                            vfs.CreateDirectory(directoryName, 1, directories, vfs.getRoot());
+                        }
+                        else {
+                            System.out.println("you don't have permission");
+                        }
                     }catch (Exception e){e.printStackTrace();}
                     break;
                 }
@@ -95,8 +107,11 @@ public class Main {
                     String dfname = directories.get(directories.size() - 1);
                     directories.remove(directories.size() - 1);
                     try{
-
-                        vfs.getFileOrDirectorytoBeDeleted(dfname, 1, directories, vfs.getRoot() ,false );
+                        if(userManager.hasPermission("01",directories)) {
+                            vfs.getFileOrDirectorytoBeDeleted(dfname, 1, directories, vfs.getRoot(), false);
+                        }else {
+                            System.out.println("you don't have permission");
+                        }
                     }catch (Exception e){e.printStackTrace();}
                     break;
                 }
@@ -109,7 +124,12 @@ public class Main {
                     String dfname = directories.get(directories.size() - 1);
                     directories.remove(directories.size() - 1);
                     try {
-                        vfs.getFileOrDirectorytoBeDeleted(dfname,1,directories,vfs.getRoot(),true);
+                        if(userManager.hasPermission("01",directories)) {
+                            vfs.getFileOrDirectorytoBeDeleted(dfname, 1, directories, vfs.getRoot(), true);
+                        }
+                        else {
+                            System.out.println("you don't have permission");
+                        }
 
                     }catch (Exception e){
                         e.printStackTrace();

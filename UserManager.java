@@ -4,7 +4,7 @@ import java.util.List;
 
 public class UserManager {
     private HashMap<String, String> users; // <username, password>
-    private HashMap<List<String>, ArrayList<HashMap<String, String>>> permission; // < path, list<username, permissions on that path> >
+    private HashMap<List<String>, HashMap<String, String>> permission; // < path, list<username, permissions on that path> >
     private String activeUser; // current logged in user.
     private VFileSystem vfs;
 
@@ -43,22 +43,54 @@ public class UserManager {
             return "User does not exist.";
         }
         if(vfs.pathExists(path)){
-            HashMap<String, String> p = new HashMap<>();
-            p.put(username, pCode);
-
             if(!permission.containsKey(path)){
-                ArrayList<HashMap<String, String>> container = new ArrayList<>();
+                HashMap<String, String> container = new HashMap<>();
                 permission.put(path, container);
             }
+            permission.get(path).put(username,pCode);
 
-            permission.get(path).add(p);
+//            permission.get(path).add(p);
             return "Permission granted.";
         }else{
             return "Path does not exist.";
         }
     }
-
+    /// the function takes the string with the permission we want to check on and a list for the path
+    public boolean hasPermission(String permissionNeeded ,List<String> path ){
+        if(activeUser.equals("admin")){
+            return true;
+        }
+        while (!path.isEmpty()){
+            if(checkPermissionEquality(getPermission(path), permissionNeeded)){
+                return true;
+            }
+            path.remove(path.size() -1);    /// we remove the leftmost in the path then check again
+                                                ///  so we grant permission if a parent directory has permission for this user
+        }
+        return false;
+    }
+    private String getPermission(List<String> path){
+        if(permission.get(path)==null)
+            return null;
+        return  permission.get(path).get(getUser());
+    }
+    private boolean checkPermissionEquality(String permissionWeHave , String permissionToCheckWith){
+        if(permissionWeHave == null){
+            return false;
+        }
+        /// if we have 11 then true for all cases
+        if(permissionWeHave.equals("11")){
+            return true;
+        }
+        else {
+            /// otherwise if we have 10 or 01 we need to check for equality of permission
+            return permissionToCheckWith.equals(permissionWeHave);
+        }
+    }
     public String getActiveUser() {
         return "Current active user: " + activeUser;
+    }
+    private String getUser(){
+        return this.activeUser;
     }
 }
