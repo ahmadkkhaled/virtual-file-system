@@ -42,10 +42,12 @@ public class VFileSystem {
     }
 
     private void LoadState() throws Exception {
-        Scanner reader = new Scanner(new File("state_file.txt"));
-
+        File file = new File("state_file.txt");
+        file.createNewFile();
+        Scanner reader = new Scanner(file);
         Integer storageSize = Integer.parseInt(reader.nextLine());
         if(storageSize != _storageBlocks.length){
+            reader.close();
             throw new Exception("Saved storage size is different from storage size passed to VFileSystem constructor");
         }
 
@@ -66,9 +68,11 @@ public class VFileSystem {
     public VFileSystem(int storageSize){
         _root = new VDirectory("root");
         _storageBlocks = new boolean[storageSize];
-
-        try{ LoadState(); }
-        catch (Exception e){e.printStackTrace();}
+        File file = new File("state_file.txt");
+        if(file.exists()){
+            try{ LoadState(); }
+            catch (Exception e){e.printStackTrace();}
+        }
     }
 
 

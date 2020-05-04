@@ -5,16 +5,20 @@ import java.util.List;
 public class UserManager {
     private HashMap<String, String> users; // <username, password>
     private HashMap<List<String>, HashMap<String, String>> permission; // < path, list<username, permissions on that path> >
-    private String activeUser; // current logged in user.
+    private String activeUser =""; // current logged in user.
     private VFileSystem vfs;
 
     UserManager(VFileSystem vfs){
         users = new HashMap<>();
         permission = new HashMap<>();
-        users.put("admin", "123"); /// TODO should only be executed if the program wasn't able to load UserManager from a file
-        activeUser = "admin";
+        this.users.put("admin", "123");
         this.vfs = vfs;
     }
+
+    public void setLoggedIn(String username){
+        this.activeUser = username;
+    }
+
     public String CreateUser(String username, String password){
         if(!activeUser.equals("admin")){
             return "Access to CreateUser function denied.";
@@ -30,9 +34,9 @@ public class UserManager {
         if(users.get(username) != null && users.get(username).equals(password)){
             activeUser = username;
             return "Hello, " + username + "!";
-        }
-        else
+        } else{
             return "Incorrect login credentials.";
+        }
     }
 
     public String grant(String username, List<String> path, String pCode){
@@ -90,7 +94,13 @@ public class UserManager {
     public String getActiveUser() {
         return "Current active user: " + activeUser;
     }
-    private String getUser(){
+    public String getUser(){
         return this.activeUser;
+    }
+    public HashMap<List<String>, HashMap<String, String>> getPermissions(){
+        return this.permission;
+    }
+    public HashMap<String, String> getUsers(){
+        return this.users;
     }
 }

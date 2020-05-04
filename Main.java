@@ -8,10 +8,20 @@ public class Main {
             system_size = Integer.parseInt(args[0]);
         }
 
-        VFileSystem vfs = new VFileSystem(system_size);
-        UserManager userManager = new UserManager(vfs);
+        final String permissionsFile = "permissions.dat";
 
         Scanner reader = new Scanner(System.in);
+
+        VFileSystem vfs = new VFileSystem(system_size);
+        UserManager userManager = UserManagerBooter.readManager(vfs, permissionsFile);
+        while(userManager.getUser().equals("")){
+            System.out.print("Enter username: ");
+            String username = reader.nextLine().trim();
+            System.out.print("Enter password: ");
+            String password = reader.nextLine().trim();
+            System.out.println(userManager.login(username, password));
+        }
+
         String userInput = "";
         boolean quit = false;
         while(!quit){
@@ -56,8 +66,9 @@ public class Main {
                     }
                     String fileName = path.get(path.size() - 1);
                     path.remove(path.size() - 1);
+                    List<String> tmpDirectories = new LinkedList<>(path);
                     try{    /// i made it use indexed allocation for now only
-                        if(userManager.hasPermission("10",path)) {
+                        if(userManager.hasPermission("10",tmpDirectories)) {
                             vfs.CreateFile(fileName, fileSize, 1, path, vfs.getRoot());
                         }
                         else {
@@ -76,8 +87,9 @@ public class Main {
                     }
                     String directoryName = directories.get(directories.size() - 1);
                     directories.remove(directories.size() - 1);
+                    List<String> tmpDirectories = new LinkedList<>(directories);
                     try{
-                        if(userManager.hasPermission("10",directories)) {
+                        if(userManager.hasPermission("10",tmpDirectories)) {
                             vfs.CreateDirectory(directoryName, 1, directories, vfs.getRoot());
                         }
                         else {
@@ -106,8 +118,9 @@ public class Main {
                     }
                     String dfname = directories.get(directories.size() - 1);
                     directories.remove(directories.size() - 1);
+                    List<String> tmpDirectories = new LinkedList<>(directories);
                     try{
-                        if(userManager.hasPermission("01",directories)) {
+                        if(userManager.hasPermission("01",tmpDirectories)) {
                             vfs.getFileOrDirectorytoBeDeleted(dfname, 1, directories, vfs.getRoot(), false);
                         }else {
                             System.out.println("you don't have permission");
@@ -123,8 +136,9 @@ public class Main {
                     }
                     String dfname = directories.get(directories.size() - 1);
                     directories.remove(directories.size() - 1);
+                    List<String> tmpDirectories = new LinkedList<>(directories);
                     try {
-                        if(userManager.hasPermission("01",directories)) {
+                        if(userManager.hasPermission("01",tmpDirectories)) {
                             vfs.getFileOrDirectorytoBeDeleted(dfname, 1, directories, vfs.getRoot(), true);
                         }
                         else {
@@ -141,6 +155,7 @@ public class Main {
                 {
                     quit = true;
                     try{
+                        UserManagerBooter.saveManager(userManager, permissionsFile);
                         vfs.SaveState();
                     }catch (Exception e){e.printStackTrace();}
                     break;
